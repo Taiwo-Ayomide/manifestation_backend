@@ -19,7 +19,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mongodb-js/saslprep@npm:^1.1.5":
+"@mongodb-js/saslprep@npm:^1.1.5, @mongodb-js/saslprep@npm:^1.1.9":
   version: 1.1.9
   resolution: "@mongodb-js/saslprep@npm:1.1.9"
   dependencies:
@@ -164,6 +164,7 @@ __metadata:
     crypto-js: "npm:^4.2.0"
     dotenv: "npm:^16.4.5"
     express: "npm:^4.21.1"
+    mongodb: "npm:^6.11.0"
     mongoose: "npm:^8.8.3"
     nodemon: "npm:^3.1.7"
   languageName: unknown
@@ -231,7 +232,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bson@npm:^6.7.0":
+"bson@npm:^6.10.0, bson@npm:^6.7.0":
   version: 6.10.0
   resolution: "bson@npm:6.10.0"
   checksum: 10c0/1447b08cc4910cc1d1b55642184fa13d06bc2b454280d09431082a8293b83854971821129d4925b22f5e2b49e08cdc1ac958a0193cfbad9efb2381ad3d86f242
@@ -1159,6 +1160,40 @@ __metadata:
     "@types/whatwg-url": "npm:^11.0.2"
     whatwg-url: "npm:^13.0.0"
   checksum: 10c0/758f6fddde603cbe584d77f71216fc333bff18b53a8524291bb9924754de39a36af812905f3295b85ae1b20ed0a0155e8176207d34fe229f9d10c672393b7f4f
+  languageName: node
+  linkType: hard
+
+"mongodb@npm:^6.11.0":
+  version: 6.11.0
+  resolution: "mongodb@npm:6.11.0"
+  dependencies:
+    "@mongodb-js/saslprep": "npm:^1.1.9"
+    bson: "npm:^6.10.0"
+    mongodb-connection-string-url: "npm:^3.0.0"
+  peerDependencies:
+    "@aws-sdk/credential-providers": ^3.188.0
+    "@mongodb-js/zstd": ^1.1.0
+    gcp-metadata: ^5.2.0
+    kerberos: ^2.0.1
+    mongodb-client-encryption: ">=6.0.0 <7"
+    snappy: ^7.2.2
+    socks: ^2.7.1
+  peerDependenciesMeta:
+    "@aws-sdk/credential-providers":
+      optional: true
+    "@mongodb-js/zstd":
+      optional: true
+    gcp-metadata:
+      optional: true
+    kerberos:
+      optional: true
+    mongodb-client-encryption:
+      optional: true
+    snappy:
+      optional: true
+    socks:
+      optional: true
+  checksum: 10c0/a3d38aef41d1656058ff6a6aecc741d0308864752ac58ffc990dcd021db514e2855390bb9f107f5b99777bc4a720c84a40818afb4ac12b4e19760ce36a664206
   languageName: node
   linkType: hard
 
