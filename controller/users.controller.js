@@ -5,6 +5,11 @@ const CryptoJS = require('crypto-js');
 require('dotenv').config();
 const { authMiddleware, verifyTokenAndCoordinator } = require('./middleware');
 
+// Add this helper function
+const excludePassword = (user) => {
+    const { password, ...userData } = user.toObject();
+    return userData;
+};
 
 // GET USER BY ID
 router.get("/user/:id", verifyTokenAndCoordinator,  async (req, res) => {
@@ -23,7 +28,7 @@ router.get("/user/:id", verifyTokenAndCoordinator,  async (req, res) => {
 });
 
 // UPDATE USER
-router.put("/user/:id", authMiddleware, async (req, res) => {
+router.put("/user/:id", verifyTokenAndCoordinator, async (req, res) => {
     try {
         const { password, ...updateData } = req.body;
         
@@ -72,6 +77,44 @@ router.delete("/user/:id", verifyTokenAndCoordinator, async (req, res) => {
     } catch (error) {
         console.error("Error deleting user:", error);
         res.status(500).json({ message: "Server error while deleting user" });
+    }
+});
+
+
+// GET ALL USERS
+router.get("/", async (req, res) => {
+    try {
+        // Add query parameters for filtering
+        const query = {};
+        if (req.query.center) query.center = req.query.center;
+        if (req.query.isStudent !== undefined) query.isStudent = req.query.isStudent;
+
+        // Add pagination
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+
+        // Fetch users with filters and pagination
+        const users = await User.find(query)
+            .skip(skip)
+            .limit(limit)
+            .select('-password'); // Exclude password field
+
+        // Get total count for pagination
+        const total = await User.countDocuments(query);
+
+        res.status(200).json({
+            users,
+            pagination: {
+                currentPage: page,
+                totalPages: Math.ceil(total / limit),
+                totalUsers: total,
+                usersPerPage: limit
+            }
+        });
+    } catch (error) {
+        console.error("Error fetching users:", error);
+        res.status(500).json({ message: "Server error while fetching users" });
     }
 });
 

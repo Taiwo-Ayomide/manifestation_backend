@@ -9,7 +9,7 @@ const ExamSchema = new mongoose.Schema({
     duration: {
         type: Number,
         required: true,
-        default: 2700 // 45 minutes in seconds
+        default: 2700
     },
     questions: [{
         type: mongoose.Schema.Types.ObjectId,

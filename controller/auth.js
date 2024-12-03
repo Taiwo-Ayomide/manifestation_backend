@@ -11,10 +11,28 @@ router.post("/register", async (req, res) => {
     const { name, email, center, password } = req.body;
     
     try {
+
+        if (!name || !email || !center || !password) {
+            return res.status(400).json({ 
+                message: 'Missing required fields',
+                missing: {
+                    name: !name,
+                    email: !email,
+                    center: !center,
+                    password: !password
+                }
+            });
+        }
+
         // Check if email already exists
         const existingEmail = await User.findOne({ email });
         if (existingEmail) {
             return res.status(400).json({ message: 'Email already exists' });
+        }
+
+        const existingName = await User.findOne({ name });
+        if (existingName) {
+            return res.status(400).json({ message: 'Name already exists' });
         }
 
         // Encrypt password
@@ -44,9 +62,12 @@ router.post("/register", async (req, res) => {
 
     } catch (error) {
         console.error("Error during registration:", error);
-        res.status(500).json({ message: 'Server error during registration' });
+        res.status(500).json({ 
+            message: 'Server error during registration',
+        });
     }
 });
+
 
 // LOGIN STUDENT
 router.post("/login-student", async (req, res) => {
@@ -59,8 +80,6 @@ router.post("/login-student", async (req, res) => {
             return res.status(401).json({ message: "Wrong Email" });
         }
 
-        console.log("User found:", user);
-        console.log("Encrypted password:", user.password);
 
         // Decrypt the stored password
         const hashPassword = CryptoJS.AES.decrypt(user.password, process.env.PASS_SEC);
@@ -103,12 +122,8 @@ router.post("/login-coordinator", async (req, res) => {
     try {
         const user = await User.findOne({ email });
         if (!user) {
-            console.log(`User not found for email: ${email}`);
             return res.status(401).json({ message: "Wrong Email" });
         }
-
-        console.log("User found:", user);
-        console.log("Encrypted password:", user.password);
 
         // Decrypt the stored password
         const hashPassword = CryptoJS.AES.decrypt(user.password, process.env.PASS_SEC);

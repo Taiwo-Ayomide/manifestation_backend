@@ -3,7 +3,7 @@ const moongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const authRoute = require("./controller/auth")
-const userRoute = require("./controller/users")
+const userRoute = require("./controller/users.controller")
 const examRoutes = require('./controller/exam.controller');
 
 const app = express();
@@ -11,6 +11,7 @@ const app = express();
 app.use(cors());
 dotenv.config();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 moongoose
     .connect(process.env.MONGODB_URL)
