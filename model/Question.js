@@ -1,79 +1,51 @@
-const mongoose = require('mongoose');
+// // models/Question.js
+// const mongoose = require('mongoose');
+// const Schema = mongoose.Schema;
 
-const OptionSchema = new mongoose.Schema({
-    text: {
-        type: String,
-        required: true
-    },
-    isCorrect: {
-        type: Boolean,
-        required: true
-    }
-});
+// // Define the Question schema
+// const questionSchema = new Schema({
+//   questionText: {
+//     type: String,
+//     required: true,
+//   },
+//   options: {
+//     type: [String], // An array of possible answers
+//     required: true,
+//   },
+//   correctAnswer: {
+//     type: String,
+//     required: true,
+//   },
+//   programme: {
+//     type: Schema.Types.ObjectId,
+//     ref: 'Programme', // Reference to the Programme model
+//     required: true,
+//   },
+//   semester: {
+//     type: String, // First, Second, Third, etc.
+//     required: true,
+//   },
+//   session: {
+//     type: Schema.Types.ObjectId,
+//     ref: 'Session', // Reference to the Session model
+//     required: true,
+//   },
+// });
+
+// module.exports = mongoose.model('Question', questionSchema);
+
 
 const QuestionSchema = new mongoose.Schema({
-    title: {
-        type: String,
-        required: true,
-        trim: true
+  programme: { type: String, required: true },
+  semester: { type: String, required: true },
+  session: { type: String, required: true },
+  text: { type: String, required: true },
+  options: [
+    {
+      text: { type: String, required: true },
+      isCorrect: { type: Boolean, required: true },
     },
-    description: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    options: [OptionSchema],
-    difficulty: {
-        type: String,
-        enum: ['easy', 'medium', 'hard'],
-        default: 'medium',
-        required: true
-    },
-    category: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    marks: {
-        type: Number,
-        required: true,
-        default: 1
-    },
-    status: {
-        type: String,
-        enum: ['active', 'inactive', 'draft'],
-        default: 'active'
-    },
-    createdBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-    },
-    timeLimit: {
-        type: Number,  // in seconds
-        default: 60
-    },
-    tags: [{
-        type: String,
-        trim: true
-    }]
-}, { 
-    timestamps: true,
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true }
+  ],
 });
 
-// Indexes for better query performance
-QuestionSchema.index({ category: 1, difficulty: 1 });
-QuestionSchema.index({ status: 1 });
-QuestionSchema.index({ tags: 1 });
-
-// Virtual for getting total attempts
-QuestionSchema.virtual('totalAttempts', {
-    ref: 'Attempt',
-    localField: '_id',
-    foreignField: 'questionId',
-    count: true
-});
-
-module.exports = mongoose.model('Question', QuestionSchema); 
+const Question = mongoose.model('Question', QuestionSchema);

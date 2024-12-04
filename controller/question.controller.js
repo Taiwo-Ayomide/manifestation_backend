@@ -1,68 +1,32 @@
 const express = require('express');
 const router = express.Router();
 const Question = require('../model/Question');
-const { verifyToken, verifyTokenAndCoordinator } = require('./middleware');  // Assuming you have auth middleware
+const { verifyToken, verifyTokenAndCoordinator } = require('./middleware');  // Assuming you have auth middlewar;
 
-// Create a new question
+// POST route to save questions
 router.post('/questions', verifyTokenAndCoordinator, async (req, res) => {
-    try {
-        const {
-            title,
-            description,
-            options,
-            difficulty,
-            category,
-            marks,
-            timeLimit,
-            tags
-        } = req.body;
+  const { questions } = req.body;  // Get questions from request body
 
-        // Validate options array
-        if (!Array.isArray(options) || options.length < 2) {
-            return res.status(400).json({
-                success: false,
-                message: 'At least 2 options are required'
-            });
-        }
+  if (!questions || questions.length === 0) {
+    return res.status(400).json({ success: false, message: 'No questions provided.' });
+  }
 
-        // Ensure at least one correct answer exists
-        const hasCorrectAnswer = options.some(option => option.isCorrect);
-        if (!hasCorrectAnswer) {
-            return res.status(400).json({
-                success: false,
-                message: 'At least one correct answer must be specified'
-            });
-        }
+  try {
+    // Create and save each question
+    const createdQuestions = await Question.insertMany(questions);
 
-        const question = new Question({
-            title,
-            description,
-            options,
-            difficulty,
-            category,
-            marks: marks || 1,
-            timeLimit: timeLimit || 60,
-            tags: tags || [],
-            createdBy: req.user.id,
-            status: 'active'
-        });
-
-        const savedQuestion = await question.save();
-
-        res.status(201).json({
-            success: true,
-            message: 'Question created successfully',
-            data: savedQuestion
-        });
-
-    } catch (error) {
-        console.error('Error creating question:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error creating question',
-            error: error.message
-        });
-    }
+    res.status(200).json({
+      success: true,
+      message: 'Questions posted successfully!',
+      data: createdQuestions,
+    });
+  } catch (error) {
+    console.error('Error posting questions:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while posting questions.',
+    });
+  }
 });
 
 // Get all questions with filtering and pagination

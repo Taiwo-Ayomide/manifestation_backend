@@ -5,6 +5,8 @@ const dotenv = require('dotenv');
 const authRoute = require("./controller/auth")
 const userRoute = require("./controller/users.controller")
 const examRoutes = require('./controller/exam.controller');
+const quizRoutes = require('./controller/quiz.controller');
+const questionRoutes = require('./controller/question.controller');
 
 const app = express();
 
@@ -24,6 +26,8 @@ moongoose
 app.use('/api', authRoute);
 app.use('/api', userRoute);
 app.use('/api', examRoutes);
+app.use('/api', quizRoutes);
+app.use('/api', questionRoutes);
 
 
 app.listen(5000, () => {
