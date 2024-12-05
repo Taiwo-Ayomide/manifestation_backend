@@ -5,7 +5,7 @@ const { verifyToken, verifyTokenAndCoordinator } = require('./middleware');  // 
 
 // POST route to save questions
 router.post('/questions', verifyTokenAndCoordinator, async (req, res) => {
-  const { questions } = req.body;  // Get questions from request body
+  const { questions } = req.body;
 
   if (!questions || questions.length === 0) {
     return res.status(400).json({ success: false, message: 'No questions provided.' });
@@ -30,27 +30,29 @@ router.post('/questions', verifyTokenAndCoordinator, async (req, res) => {
 });
 
 // Get all questions with filtering and pagination
-router.get('/questions', verifyToken, async (req, res) => {
+router.get('/questions', verifyTokenAndCoordinator, async (req, res) => {
     try {
-        const { 
-            difficulty, 
-            category, 
-            status,
-            page = 1, 
-            limit = 10 
+        const {
+            programme,
+            semester,
+            session,
+            page = 1,
+            limit = 10
         } = req.query;
 
+        // Build query based on filters
         const query = {};
-        if (difficulty) query.difficulty = difficulty;
-        if (category) query.category = category;
-        if (status) query.status = status;
+        if (programme) query.programme = programme;
+        if (semester) query.semester = semester;
+        if (session) query.session = session;
 
+        // Execute query with pagination
         const questions = await Question.find(query)
-            .populate('createdBy', 'name email')
             .skip((page - 1) * limit)
             .limit(parseInt(limit))
             .sort({ createdAt: -1 });
 
+        // Get total count for pagination
         const total = await Question.countDocuments(query);
 
         res.json({
@@ -58,11 +60,13 @@ router.get('/questions', verifyToken, async (req, res) => {
             data: questions,
             pagination: {
                 total,
-                page: parseInt(page),
-                pages: Math.ceil(total / limit)
+                currentPage: parseInt(page),
+                totalPages: Math.ceil(total / limit),
+                limit: parseInt(limit)
             }
         });
     } catch (error) {
+        console.error('Error fetching questions:', error);
         res.status(500).json({
             success: false,
             message: 'Error fetching questions',
@@ -70,6 +74,7 @@ router.get('/questions', verifyToken, async (req, res) => {
         });
     }
 });
+
 
 // Get a specific question by ID
 router.get('/questions/:id', verifyToken, async (req, res) => {

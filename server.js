@@ -23,11 +23,11 @@ moongoose
     });
 
 
-app.use('/api', authRoute);
-app.use('/api', userRoute);
-app.use('/api', examRoutes);
-app.use('/api', quizRoutes);
-app.use('/api', questionRoutes);
+app.use('/api/auth/', authRoute);
+app.use('/api/user/', userRoute);
+app.use('/api/exam/', examRoutes);
+app.use('/api/quiz/', quizRoutes);
+app.use('/api/question/', questionRoutes);
 
 
 app.listen(5000, () => {

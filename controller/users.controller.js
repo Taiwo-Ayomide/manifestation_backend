@@ -3,7 +3,7 @@ const router = express.Router();
 const User = require("../model/User");
 const CryptoJS = require('crypto-js');
 require('dotenv').config();
-const { authMiddleware, verifyTokenAndCoordinator } = require('./middleware');
+const { verifyTokenAndCoordinator } = require('./middleware');
 
 // Add this helper function
 const excludePassword = (user) => {
@@ -82,7 +82,7 @@ router.delete("/user/:id", verifyTokenAndCoordinator, async (req, res) => {
 
 
 // GET ALL USERS
-router.get("/", async (req, res) => {
+router.get("/", verifyTokenAndCoordinator, async (req, res) => {
     try {
         // Add query parameters for filtering
         const query = {};

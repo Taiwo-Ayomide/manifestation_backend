@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Programme = require('../model/Programme');
 const Session = require('../model/Session');
+const Semester = require('../model/Semester');
 const Quiz = require('../model/Quiz');
 const { verifyToken } = require('./middleware');
 
@@ -21,10 +22,16 @@ router.post('/start-quiz', verifyToken, async (req, res) => {
       return res.status(404).json({ success: false, message: 'Session not found.' });
     }
 
+    // Find the semester
+    const semesterDoc = await Semester.findOne({ name: semester });
+    if (!semesterDoc) {
+      return res.status(404).json({ success: false, message: 'Semester not found.' });
+    }
+
     // Find the quiz based on programme, semester, and session
     const quiz = await Quiz.findOne({
       programme: programmeDoc._id,
-      semester: semester,
+      semester: semesterDoc._id,
       session: sessionDoc._id
     });
 

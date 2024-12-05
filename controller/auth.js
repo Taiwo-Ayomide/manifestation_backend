@@ -80,6 +80,10 @@ router.post("/login-student", async (req, res) => {
             return res.status(401).json({ message: "Wrong Email" });
         }
 
+        // Check if the user is a student
+        if (!user.isStudent) {
+            return res.status(403).json({ message: "Please pay a one time payment to Dr. Lee before login" });
+        }
 
         // Decrypt the stored password
         const hashPassword = CryptoJS.AES.decrypt(user.password, process.env.PASS_SEC);
@@ -122,7 +126,13 @@ router.post("/login-coordinator", async (req, res) => {
     try {
         const user = await User.findOne({ email });
         if (!user) {
+            console.log(`User not found for email: ${email}`);
             return res.status(401).json({ message: "Wrong Email" });
+        }
+
+        // Check if the user is a student
+        if (!user.isCoordinator) {
+            return res.status(403).json({ message: "Administrator Login only" });
         }
 
         // Decrypt the stored password
