@@ -35,6 +35,8 @@
 // module.exports = mongoose.model('Question', questionSchema);
 
 
+const mongoose = require('mongoose');
+
 const QuestionSchema = new mongoose.Schema({
   programme: { type: String, required: true },
   semester: { type: String, required: true },
@@ -48,4 +50,4 @@ const QuestionSchema = new mongoose.Schema({
   ],
 });
 
-const Question = mongoose.model('Question', QuestionSchema);
+module.exports = mongoose.model('Question', QuestionSchema);
